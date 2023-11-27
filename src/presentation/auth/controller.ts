@@ -28,20 +28,20 @@ export class AuthContoller {
   loginUser = (req: Request, res: Response) => {
     const [error, registroUsuarioDTO] = LoginUserDTO.create(req.body);
     if (error) return res.status(400).json({ mensaje: error });
-    this.authService.login(registroUsuarioDTO!).then(user=> res.json(user))
-    .catch(error => this.handleError(error, res));
-    
+    this.authService.login(registroUsuarioDTO!).then(user => res.json(user))
+      .catch(error => this.handleError(error, res));
+
   }
 
-  validateEmail = (req: Request, res: Response) => {
-    const {token} = req.params;
+  validateEmail = (req: Request, res: Response) => {        
+    const token =req.params.token
     if (!token) return res.status(400).json({ mensaje: "El token no existe" });
-    try {
-     const payload =this.authService.validarToken(token);
-     return res.status(200).json(payload);
-    }catch(error){
-    this.handleError(error,res);
-    }
+
+    this.authService.validarEmail(token)
+      .then(payload => res.json(payload))
+      .catch(e => this.handleError(e, res));
+
+
 
 
   }
