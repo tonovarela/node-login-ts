@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { AuthContoller } from './controller';
-import { AuthService, EmailService } from './services';
+import { AuthService, EmailService } from '../services';
 import { envs } from '../../config';
 
 

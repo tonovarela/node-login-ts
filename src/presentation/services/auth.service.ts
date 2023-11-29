@@ -1,9 +1,9 @@
 
 
-import { bcryptAdapter, envs } from "../../../config";
-import { JWTAdapter } from "../../../config/jwt.adapter";
-import { UsuarioModel } from "../../../data";
-import { CustomError, LoginUserDTO, RegisterUserDTO, UsuarioEntity } from "../../../domain";
+import { bcryptAdapter, envs } from "../../config";
+import { JWTAdapter } from "../../config/jwt.adapter";
+import { UsuarioModel } from "../../data";
+import { CustomError, LoginUserDTO, RegisterUserDTO, UsuarioEntity } from "../../domain";
 import { EmailService } from "./email.service";
 
 
@@ -27,14 +27,18 @@ export class AuthService {
     }
 
     registroUsuario = async (registerDTO: RegisterUserDTO) => {
+        const isProduction = envs.PRODUCTION;
         const existeUsuario = await UsuarioModel.findOne({ email: registerDTO.email });
         if (existeUsuario) throw CustomError.badRequest("Ya existe un usuario con ese email");
         const nuevoUsuario = new UsuarioModel(registerDTO);
         nuevoUsuario.password = bcryptAdapter.hash(registerDTO.password);
-        await nuevoUsuario.save();        
+        isProduction 
+            ? await this.sendEmailValidation(nuevoUsuario.email)
+            : nuevoUsuario.emailVerificado = true;
 
-        await this.sendEmailValidation(nuevoUsuario.email);
-        const { password, ...rest } = UsuarioEntity.fromObject(nuevoUsuario);        
+        await nuevoUsuario.save();
+
+        const { password, ...rest } = UsuarioEntity.fromObject(nuevoUsuario);
         return { user: { ...rest } };
     }
 
@@ -42,17 +46,17 @@ export class AuthService {
         const payload: any = await JWTAdapter.validateToken(token);
         if (payload == null) {
             throw CustomError.unAuthorized('Token no valido');
-        }        
-        const user = await UsuarioModel.findOne({email:payload.email});        
-        if (!user){
+        }
+        const user = await UsuarioModel.findOne({ email: payload.email });
+        if (!user) {
             throw CustomError.notFound('Usuario no encontrado');
         }
-        if (user.emailVerificado){
+        if (user.emailVerificado) {
             throw CustomError.badRequest('El correo ya ha sido verificado');
         }
-        user.emailVerificado=true;
-        user.save();        
-        return {mensaje:"Usuario validado" }
+        user.emailVerificado = true;
+        user.save();
+        return { mensaje: "Usuario validado" }
     }
 
 
@@ -65,7 +69,7 @@ export class AuthService {
         <p>click en el siguiente link para validar tu email</p>
         <a href="${link}">Validar tu  email</a>
         `
-        const seEnvio =await this.emailService.sendEmail({
+        const seEnvio = await this.emailService.sendEmail({
             to: email,
             subject: 'Valida tu email',
             htmlBody: html

@@ -28,7 +28,9 @@ const usuarioSchema = new mongoose.Schema({
         enum:['admin','user'],
         default:['user'],
         required: [true, 'El rol es requerido']
-    }
+    },
+
+    
 
 });
 

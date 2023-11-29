@@ -18,20 +18,19 @@ export class JWTAdapter {
         });
     }
 
-    static validateToken(token: string) {
-        return new Promise((resolve, reject) => {
-            jwt.verify(token, JWTSECRET, (err, decoded) => {
-                if (err) {
-                    resolve(null);
-                } else {
-                    resolve(decoded);
-                }
+    static validateToken<T>(token: string): Promise<T | null> {
+        {
+            return new Promise((resolve, reject) => {
+                jwt.verify(token, JWTSECRET, (err, decoded) => {
+                    if (err) {
+                        resolve(null);
+                    } else {
+                        resolve(decoded as T);
+                    }
+                });
+
             });
-
-
-        });
+        }
     }
-
-
 
 }
