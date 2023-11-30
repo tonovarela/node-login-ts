@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 const categorySchema = new mongoose.Schema({
     nombre: {
         type: String,
+        unique:true,
         required: [true, 'El nombre es requerido']
     },
     disponible: {

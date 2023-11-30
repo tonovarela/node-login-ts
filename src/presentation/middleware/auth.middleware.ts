@@ -15,7 +15,7 @@ export class AuthMiddleware {
             const user = await UsuarioModel.findOne({ _id: payload.id });
             if (!user) return res.status(401).json({ error: 'Invalid token'});
             if (!user.emailVerificado) return res.status(401).json({ error: 'Usuario inactivo' });
-            req.body.user=UsuarioEntity.fromObject(user);            
+            req.body.usuario=UsuarioEntity.fromObject(user);            
             next();
         } catch (error) {
             console.error(error);
