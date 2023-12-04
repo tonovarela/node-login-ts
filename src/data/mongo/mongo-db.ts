@@ -21,10 +21,12 @@ export class MongoDatabase {
 
         } catch (error) {
             console.log("Mongo conecction error|");
-            throw error
-            return false;
+            throw error            
 
         }
+    }
+    static async disconnect(): Promise<void> {
+        await mongoose.disconnect();
     }
 
 

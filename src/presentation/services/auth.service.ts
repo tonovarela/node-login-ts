@@ -39,7 +39,7 @@ export class AuthService {
         await nuevoUsuario.save();
 
         const { password, ...rest } = UsuarioEntity.fromObject(nuevoUsuario);
-        return { user: { ...rest } };
+        return { user: { ...rest },token: await JWTAdapter.createToken({ id: nuevoUsuario.id }) };
     }
 
     validarEmail = async (token: string) => {

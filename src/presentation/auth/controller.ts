@@ -1,28 +1,20 @@
 import { Request, Response } from 'express';
-import { CustomError, LoginUserDTO, RegisterUserDTO } from '../../domain';
+import {  LoginUserDTO, RegisterUserDTO } from '../../domain';
 import { AuthService } from '../services/auth.service';
+import { AbstractController } from '../abstract/controller.abstract';
 
 
 
-export class AuthContoller {
-  constructor(private readonly authService: AuthService) { }
-
-  private handleError = (error: unknown, res: Response) => {
-
-    if (error instanceof CustomError)
-      return res.status(error.status).json({ error: error.mensaje });
-
-    return res.status(500).json({ "error": "Internal server error" });
+export class AuthContoller  extends AbstractController {
+  constructor(private readonly authService: AuthService) { 
+    super();
   }
-
-
   register = (req: Request, res: Response) => {
     const [error, registroUsuarioDTO] = RegisterUserDTO.create(req.body);
     if (error) return res.status(400).json({ mensaje: error });
     this.authService.registroUsuario(registroUsuarioDTO!)
       .then(user => res.json(user))
       .catch(error => this.handleError(error, res));
-
   }
 
   loginUser = (req: Request, res: Response) => {
@@ -30,13 +22,11 @@ export class AuthContoller {
     if (error) return res.status(400).json({ mensaje: error });
     this.authService.login(registroUsuarioDTO!).then(user => res.json(user))
       .catch(error => this.handleError(error, res));
-
   }
 
   validateEmail = (req: Request, res: Response) => {        
     const token =req.params.token
     if (!token) return res.status(400).json({ mensaje: "El token no existe" });
-
     this.authService.validarEmail(token)
       .then(payload => res.json(payload))
       .catch(e => this.handleError(e, res));
