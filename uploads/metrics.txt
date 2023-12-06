@@ -1,0 +1,7 @@
+89070262
+https://executrain.com.mx/calendario/
+
+Separar existencias transito ubicacion
+
+Definir conceptos para transferencias desde metrics Genera-Transito 
+Transito General ->Solicitud de entrada

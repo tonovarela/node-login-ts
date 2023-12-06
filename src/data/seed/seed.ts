@@ -44,5 +44,5 @@ async function main() {
 
 
 
-    console.log('Base de datos con informacion de prueba');
+    console.log('Base de datos con informacion de pruebaa');
 }

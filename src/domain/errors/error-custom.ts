@@ -5,8 +5,7 @@ export class CustomError extends Error {
         
     }
 
-    static badRequest(mensaje: string): CustomError {    
-        console.log("--");     
+    static badRequest(mensaje: string): CustomError {            
         throw new CustomError(400, mensaje);
     }
 
