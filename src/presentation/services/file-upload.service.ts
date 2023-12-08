@@ -26,18 +26,8 @@ export class FileUploadService {
         folder: string = "uploads",
         validExtensions: string[] = ["png", "jpg", "jpeg"]
     ) {
-        let filesName = [];
-        try {
-            for (const file of files) {
-                const fileName = await this.uploadSingle(file, folder, validExtensions)
-                filesName.push(fileName);
-            }
-        } catch (error) {
-            throw error;
-        }
-        console.log(filesName);
-        return filesName;
-
+        const  filesName = Promise.all(files.map(file => this.uploadSingle(file, folder, validExtensions)));
+        return filesName;                
     }
     public async uploadSingle(
         file: UploadedFile,

@@ -9,32 +9,20 @@ export class FileUploadContoller extends AbstractController {
         super();
     }
 
-    public upload = (req: Request, res: Response) => { 
-        
-        const type = req.params.type;
-        const validTypes = ["users", "products", "categories"];    
-        if (!validTypes.includes(type)) {
-            return res.status(400).json({ error: `El tipo de archivo no es valido, tipos validos ${validTypes}` });
-        }
+    public upload = (req: Request, res: Response) => {             
         const [file] = req.body.files as UploadedFile[];        
         this.fileUploadService
-            .uploadSingle(file,`uploads/${type}`)
+            .uploadSingle(file,`uploads/${req.body.type}`)
             .then(fileName => res.json(fileName))
             .catch(error => this.handleError(error, res));
 
     }
 
-    public uploadMultiple = (req: Request, res: Response) => {
-        
-        const type = req.params.type;
-        const validTypes = ["users", "products", "categories"];    
-        if (!validTypes.includes(type)) {
-            return res.status(400).json({ error: `El tipo de archivo no es valido, tipos validos ${validTypes}` });
-        }
+    public uploadMultiple = (req: Request, res: Response) => {                
         const files= req.body.files as UploadedFile[];    
         console.log(files);    
         this.fileUploadService
-            .uploadMultiple(files,`uploads/${type}`)
+            .uploadMultiple(files,`uploads/${req.body.type}`)
             .then(fileName => res.json(fileName))
             .catch(error => this.handleError(error, res));
     }
